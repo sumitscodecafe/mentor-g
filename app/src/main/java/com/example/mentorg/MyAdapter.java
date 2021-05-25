@@ -25,7 +25,7 @@ public class MyAdapter extends FirebaseRecyclerAdapter<HomeMenuModel, MyAdapter.
         holder.title.setText(model.getTitle());
         Glide.with(holder.img1.getContext()).load(model.getImgUrl()).into(holder.img1);
 
-        //for moving into next fragment
+        //for moving into next fragment..
 //        holder.title.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
