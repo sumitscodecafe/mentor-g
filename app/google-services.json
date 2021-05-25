@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "444269289863",
+    "project_id": "mentorbase-9aca4",
+    "storage_bucket": "mentorbase-9aca4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:444269289863:android:6e151b6e996cc7e521b322",
+        "android_client_info": {
+          "package_name": "com.example.mentorg"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "444269289863-vtbm0hf6q31q7984fpntuivptp361ost.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAry-1U6qlpPk8ArrRaNfx6egZWbblVzFI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "444269289863-vtbm0hf6q31q7984fpntuivptp361ost.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
