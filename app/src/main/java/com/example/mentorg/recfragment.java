@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.FirebaseDatabase;
@@ -22,7 +21,7 @@ public class recfragment extends Fragment {
     private String mParam1;
     private String mParam2;
     RecyclerView recyclerView;
-    MyAdapter myAdapter;
+    HomeAdapter homeAdapter;
 
     public recfragment() {
         // Required empty public constructor
@@ -60,36 +59,36 @@ public class recfragment extends Fragment {
         if(user.equals("MENTOR")) {
             menuOptions =
                     new FirebaseRecyclerOptions.Builder<HomeMenuModel>()
-                            .setQuery(FirebaseDatabase.getInstance().getReference().child("db_root/homeMenu/mentorMenu"), HomeMenuModel.class)
+                            .setQuery(FirebaseDatabase.getInstance().getReference().child("homeMenu/mentorMenu"), HomeMenuModel.class)
                             .build();
         }
         else if(user.equals("MENTEE")){
             menuOptions =
                     new FirebaseRecyclerOptions.Builder<HomeMenuModel>()
-                            .setQuery(FirebaseDatabase.getInstance().getReference().child("db_root/homeMenu/menteeMenu"), HomeMenuModel.class)
+                            .setQuery(FirebaseDatabase.getInstance().getReference().child("homeMenu/menteeMenu"), HomeMenuModel.class)
                             .build();
         }
         else{
             menuOptions =
                     new FirebaseRecyclerOptions.Builder<HomeMenuModel>()
-                            .setQuery(FirebaseDatabase.getInstance().getReference().child("db_root/homeMenu/adminMenu"), HomeMenuModel.class)
+                            .setQuery(FirebaseDatabase.getInstance().getReference().child("homeMenu/adminMenu"), HomeMenuModel.class)
                             .build();
         }
 
-        myAdapter = new MyAdapter(menuOptions);
-        recyclerView.setAdapter(myAdapter);
+        homeAdapter = new HomeAdapter(menuOptions);
+        recyclerView.setAdapter(homeAdapter);
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        myAdapter.startListening();
+        homeAdapter.startListening();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        myAdapter.stopListening();
+        homeAdapter.stopListening();
     }
 }

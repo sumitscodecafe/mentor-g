@@ -5,15 +5,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="25dp"
     android:elevation="8dp"
-    android:id="@+id/item1"
     app:cardUseCompatPadding="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/item"
         android:padding="15dp"
-        >
+        android:background="@color/white">
 
         <ImageView
             android:layout_width="85dp"
@@ -23,16 +21,19 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="85dp"
             android:textAlignment="center"
+            android:gravity="center"
             android:elevation="10dp"
             android:id="@+id/title"
             android:text="This is Demo title"
             android:textStyle="bold"
             android:textSize="28dp"
+            android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/img1"
-            android:layout_marginLeft="10dp"/>
+            android:layout_marginLeft="10dp"
+            android:textColor="#C4000000"/>
 
     </RelativeLayout>
 

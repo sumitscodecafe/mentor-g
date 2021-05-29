@@ -14,9 +14,9 @@ import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 
-public class MyAdapter extends FirebaseRecyclerAdapter<HomeMenuModel, MyAdapter.myViewholder>{
+public class HomeAdapter extends FirebaseRecyclerAdapter<HomeMenuModel, HomeAdapter.myViewholder>{
 
-    public MyAdapter(@NonNull FirebaseRecyclerOptions<HomeMenuModel> options) {
+    public HomeAdapter(@NonNull FirebaseRecyclerOptions<HomeMenuModel> options) {
         super(options);
     }
 
@@ -25,14 +25,29 @@ public class MyAdapter extends FirebaseRecyclerAdapter<HomeMenuModel, MyAdapter.
         holder.title.setText(model.getTitle());
         Glide.with(holder.img1.getContext()).load(model.getImgUrl()).into(holder.img1);
 
-        //for moving into next fragment..
-//        holder.title.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                AppCompatActivity appCompatActivity = (AppCompatActivity) v.getContext();
-//                appCompatActivity.getSupportFragmentManager().beginTransaction().replace(R.id.wrapper, new recfragment(model.getTitle())).addToBackStack(null).commit();
-//            }
-//        });
+        //for moving into next fragment***************
+        String titleText = (String) holder.title.getText();
+
+        //MENTOR OPTIONS
+        if(titleText.equals("Manage course")){
+            holder.title.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AppCompatActivity appCompatActivity = (AppCompatActivity) v.getContext();
+                    appCompatActivity.getSupportFragmentManager().beginTransaction().replace(R.id.wrapper, new ManageCourseFragment()).addToBackStack(null).commit();
+                }
+            });
+        }
+        else {
+            holder.title.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String fullName = SharedPreference.readSharedSetting(v.getContext(), "fullname", "false");
+                    AppCompatActivity appCompatActivity = (AppCompatActivity) v.getContext();
+                    appCompatActivity.getSupportFragmentManager().beginTransaction().replace(R.id.wrapper, new CoursesFragment(model.getTitle(), fullName)).addToBackStack(null).commit();
+                }
+            });
+        }
     }
 
     @NonNull

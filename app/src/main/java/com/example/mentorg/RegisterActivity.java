@@ -18,7 +18,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText username_id, password_id, cpassword_id;
+    EditText username_id, password_id, cpassword_id, fullname_id;
     RadioGroup radioGroup;
     RadioButton radioButton;
     Button btn_register_id, btn_login_id;
@@ -26,6 +26,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        fullname_id = findViewById(R.id.full_name);
         username_id = findViewById(R.id.username);
         password_id = findViewById(R.id.password);
         cpassword_id = findViewById(R.id.cpassword);
@@ -36,6 +37,7 @@ public class RegisterActivity extends AppCompatActivity {
         btn_register_id.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
+                String fullname = fullname_id.getText().toString();
                 String username = username_id.getText().toString();
                 String password = password_id.getText().toString();
                 String cpassword = cpassword_id.getText().toString();
@@ -43,20 +45,28 @@ public class RegisterActivity extends AppCompatActivity {
                 int selectedRadio = radioGroup.getCheckedRadioButtonId();
                 radioButton = findViewById(selectedRadio);
 
+                //Store in Firebase DB
+                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                DatabaseReference node = firebaseDatabase.getReference("user");
+                UserInfoHolder userInfoHolder = new UserInfoHolder(fullname, username, password);
+
                 if (selectedRadio == -1)
                     Toast.makeText(getApplicationContext(), "Select user option", Toast.LENGTH_LONG).show();
                 else{
                     user = (String) radioButton.getText();
-                    if(user.equals("Mentor"))
+                    if(user.equals("Mentor")) {
                         SharedPreference.saveSharedSetting(getApplicationContext(), "user", "MENTOR");
-                    else
+                        SharedPreference.saveSharedSetting(getApplicationContext(), "fullname", fullname);
+                        node.child("mentor").child(username).setValue(userInfoHolder);
+                    }else {
                         SharedPreference.saveSharedSetting(getApplicationContext(), "user", "MENTEE");
+                        SharedPreference.saveSharedSetting(getApplicationContext(), "fullname", fullname);
+                        node.child("mentee").child(username).setValue(userInfoHolder);
+                    }
                     startActivity(new Intent(RegisterActivity.this, MainActivity.class));
                 }
 
-                //Store in Firebase DB
-                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                DatabaseReference root = firebaseDatabase.getReference();   //parameter = name of key(here root key/parent node since null)
+
             }
         });
 
