@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="25dp"
+    android:elevation="8dp"
+    app:cardUseCompatPadding="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:padding="15dp"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:elevation="10dp"
+            android:id="@+id/name"
+            android:text="Demo course name"
+            android:textColor="#1976D2"
+            android:textStyle="bold"
+            android:textSize="28dp"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="10dp"
+            android:id="@+id/description"
+            android:text="This is Demo description"
+            android:textColor="#C4000000"
+            android:textSize="18dp"
+            android:layout_below="@id/name"
+            android:inputType="textMultiLine"
+            android:maxLength="100"
+            android:lines="3"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:elevation="10dp"
+            android:id="@+id/mentor"
+            android:text="Demo mentor"
+            android:textColor="#C4000000"
+            android:textSize="14dp"
+            android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>
