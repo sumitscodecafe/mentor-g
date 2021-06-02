@@ -36,6 +36,19 @@ public class LoginActivity extends AppCompatActivity {
                 int selectedRadio = radioGroup.getCheckedRadioButtonId();
                 radioButton = findViewById(selectedRadio);
 
+//                if(username.equals("") || password.equals("")){
+//                    Toast.makeText(getApplicationContext(), "One or more fields are empty.", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+
+                //user authentication for same device and no cleared data: since deadline approaching (Actual using firebase)
+//                String username_sharedPref = SharedPreference.readSharedSetting(getApplicationContext(), "username", "false");
+//                String password_sharedPref = SharedPreference.readSharedSetting(getApplicationContext(), "password", "false");
+//                if(!username_sharedPref.equals(username) || !password_sharedPref.equals(password)){
+//                    Toast.makeText(getApplicationContext(), "Username or password incorrect!", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }
+
                 if(selectedRadio == -1)
                     Toast.makeText(getApplicationContext(), "Select user option", Toast.LENGTH_LONG).show();
                 else{

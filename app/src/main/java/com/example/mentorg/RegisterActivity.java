@@ -37,13 +37,22 @@ public class RegisterActivity extends AppCompatActivity {
         btn_register_id.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                String fullname = fullname_id.getText().toString();
+                String fullname = fullname_id.getText().toString();     //used for Mentor's name in course
                 String username = username_id.getText().toString();
                 String password = password_id.getText().toString();
                 String cpassword = cpassword_id.getText().toString();
                 String user;
                 int selectedRadio = radioGroup.getCheckedRadioButtonId();
                 radioButton = findViewById(selectedRadio);
+
+                if(fullname.equals("") || username.equals("") || password.equals("")){
+                    Toast.makeText(getApplicationContext(), "One or more fields are empty.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(!cpassword.equals(password)){
+                    Toast.makeText(getApplicationContext(), "Passwords does not match.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 //Store in Firebase DB
                 FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -54,10 +63,13 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Select user option", Toast.LENGTH_LONG).show();
                 else{
                     user = (String) radioButton.getText();
+                    SharedPreference.saveSharedSetting(getApplicationContext(), "username", username);
+                    SharedPreference.saveSharedSetting(getApplicationContext(), "password", password);
                     if(user.equals("Mentor")) {
                         SharedPreference.saveSharedSetting(getApplicationContext(), "user", "MENTOR");
                         SharedPreference.saveSharedSetting(getApplicationContext(), "fullname", fullname);
                         node.child("mentor").child(username).setValue(userInfoHolder);
+                        Toast.makeText(getApplicationContext(), "HERE!!", Toast.LENGTH_LONG).show();
                     }else {
                         SharedPreference.saveSharedSetting(getApplicationContext(), "user", "MENTEE");
                         SharedPreference.saveSharedSetting(getApplicationContext(), "fullname", fullname);

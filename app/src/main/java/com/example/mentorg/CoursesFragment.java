@@ -20,16 +20,15 @@ public class CoursesFragment extends Fragment {
 
     private String mParam1;
     private String mParam2;
-    String title_previousFragment, fullname_previousFragment;
+    String title_previousFragment;
     RecyclerView recyclerView;
     CourseAdapter courseAdapter;
 
     public CoursesFragment() {
         // Required empty public constructor
     }
-    public CoursesFragment(String title_previousFragment, String fullname_previousFragment) {
+    public CoursesFragment(String title_previousFragment) {
         this.title_previousFragment = title_previousFragment;
-        this.fullname_previousFragment = fullname_previousFragment;
     }
 
     public static CoursesFragment newInstance(String param1, String param2) {
@@ -58,13 +57,18 @@ public class CoursesFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_recfragment, container, false);
         recyclerView = (RecyclerView)view.findViewById(R.id.recView);
         recyclerView.setLayoutManager(new LinearLayoutManager((getContext())));
+        String username = SharedPreference.readSharedSetting(getActivity(), "username", "false");
 
-        menuOptions =
-                new FirebaseRecyclerOptions.Builder<CoursesModel>()
-                        .setQuery(FirebaseDatabase.getInstance().getReference().child("courses"), CoursesModel.class)
-                        .build();
+        if(title_previousFragment.equals("Available course"))
+            menuOptions = new FirebaseRecyclerOptions.Builder<CoursesModel>()
+                                .setQuery(FirebaseDatabase.getInstance().getReference().child("course"), CoursesModel.class)
+                                .build();
+        else
+            menuOptions = new FirebaseRecyclerOptions.Builder<CoursesModel>()
+                                .setQuery(FirebaseDatabase.getInstance().getReference().child("userCourse").child(username), CoursesModel.class)
+                                .build();
 
-        courseAdapter = new CourseAdapter(menuOptions);
+        courseAdapter = new CourseAdapter(menuOptions, title_previousFragment);
         recyclerView.setAdapter(courseAdapter);
         return view;
     }

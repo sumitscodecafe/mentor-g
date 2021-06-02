@@ -28,12 +28,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class ManageCourseFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -83,35 +81,68 @@ public class ManageCourseFragment extends Fragment {
                 String description = courseDescription.getText().toString();
                 String mentorName = SharedPreference.readSharedSetting(getActivity(), "fullname", "false");
 
+                if(name.equals("") || mentorName.equals("")){
+                    Toast.makeText(getActivity(), "Course name can't be empty.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 //Store in Firebase DB
                 FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                DatabaseReference node = firebaseDatabase.getReference("courses");
-                CourseInfoHolder courseInfoHolder = new CourseInfoHolder(name, description, mentorName);
+                DatabaseReference node = firebaseDatabase.getReference();
+                CoursesModel courseModel = new CoursesModel(name, description, mentorName);
 
                 if (selectedRadio == -1)
                     Toast.makeText(getActivity(), "Select action", Toast.LENGTH_SHORT).show();
                 else{
                     action = (String) radioButton.getText();
+                    String username = SharedPreference.readSharedSetting(getActivity(), "username", "false");
                     if(action.equals("Add course")){
-                        node.push().setValue(courseInfoHolder);
+                        if(description.equals("")){
+                            Toast.makeText(getActivity(), "Description can't be empty.", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        node.child("course").push().setValue(courseModel);  //For general all courses
+                        node.child("userCourse").child(username).push().setValue(courseModel);  //For personalised courses
                         Toast.makeText(getActivity(), "Course added", Toast.LENGTH_LONG).show();
                     }else{
-                        Query getCourseId = node.orderByChild("name").equalTo(name);
+                        //For general course removal
+                        Query getCourseId = node.child("course").orderByChild("name").equalTo(name);
+                        getCourseId.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
+                                int unEnrolledFlag = 0;
+                                for (DataSnapshot idSnapshot: dataSnapshot.getChildren()) {
+                                    if(idSnapshot.hasChildren()) {
+                                        idSnapshot.getRef().removeValue();
+                                        unEnrolledFlag = 1;
+                                        Toast.makeText(getActivity(), "Course removed", Toast.LENGTH_SHORT).show();
+                                    }
+                                    if(unEnrolledFlag == 0)
+                                        Toast.makeText(getActivity(), "Course not found!", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) { }
+                        });
+                        //For personal course removal
+                        Query getUserCourseId = node.child("userCourse").child(username).orderByChild("name").equalTo(name);
                         getCourseId.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
                                 for (DataSnapshot idSnapshot: dataSnapshot.getChildren()) {
                                     if(idSnapshot.hasChildren()) {
                                         idSnapshot.getRef().removeValue();
-                                        Toast.makeText(getActivity(), "Course removed", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getActivity(), "Course removed", Toast.LENGTH_SHORT).show();
                                     }
                                     else
-                                        Toast.makeText(getActivity(), "Course not found!", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getActivity(), "Course not found!", Toast.LENGTH_SHORT).show();
                                 }
                             }
 
                             @Override
-                            public void onCancelled(@NonNull DatabaseError error) { }                        });
+                            public void onCancelled(@NonNull DatabaseError error) { }
+                        });
                     }
                     courseName.setText("");
                     courseDescription.setText("");

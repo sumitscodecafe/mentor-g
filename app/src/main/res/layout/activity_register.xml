@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterActivity">
+    tools:context=".RegisterActivity"
+    android:background="@drawable/bg_wc">
 
     <TextView
         android:layout_width="wrap_content"
@@ -11,7 +12,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
         android:text="REGISTRATION"
-        android:textSize="20dp"
+        android:textSize="22dp"
         android:id="@+id/heading"/>
 
     <EditText
@@ -73,6 +74,7 @@
             android:id="@+id/id_mentee"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:text="@string/mentee" />
     </RadioGroup>
 
@@ -83,8 +85,11 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/groupRadio"
+        android:elevation="10dp"
         android:layout_marginTop="10dp"
         android:ems="10"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/white"
         android:text="Register" />
 
     <Button
@@ -94,7 +99,10 @@
         android:layout_centerHorizontal="true"
         android:text="Login"
         android:layout_marginBottom="20dp"
-        android:layout_alignParentBottom="true"/>
+        android:textColor="@color/black"
+        android:backgroundTint="@color/white"
+        android:layout_alignParentBottom="true"
+        android:elevation="10dp"/>
 
 
 </RelativeLayout>

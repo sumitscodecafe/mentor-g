@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/bg3"
     tools:context=".ManageCourseFragment">
 
     <TextView
@@ -56,6 +57,7 @@
             android:id="@+id/id_remove_course"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@color/black"
             android:text="Remove course"/>
     </RadioGroup>
 
@@ -68,15 +70,9 @@
         android:layout_marginTop="50dp"
         android:layout_below="@+id/groupRadio"
         android:ems="10"
+        android:elevation="10dp"
+        android:textColor="@color/black"
+        android:backgroundTint="@color/white"
         android:text="Submit" />
-
-<!--    <Button-->
-<!--        android:id="@+id/btn_view_course"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        android:text="View course offered by me"-->
-<!--        android:layout_below="@+id/btn_submit"/>-->
-
 
 </RelativeLayout>
