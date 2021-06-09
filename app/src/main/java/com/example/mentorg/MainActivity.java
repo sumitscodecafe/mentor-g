@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportFragmentManager().beginTransaction().replace(R.id.wrapper, new recfragment()).commit();
 
+        //Future enhancements 1.0:
 //        String fullname = SharedPreference.readSharedSetting(getApplicationContext(), "fullname", "false");
 //        String user = SharedPreference.readSharedSetting(getApplicationContext(), "user", "false");
 //
