@@ -1,6 +1,8 @@
 package com.example.mentorg;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,13 +28,18 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
+import static androidx.core.content.ContextCompat.startActivity;
 
 public class HomeAdapter extends FirebaseRecyclerAdapter<HomeMenuModel, HomeAdapter.myViewholder>{
 
     String courseTitle;
+    int flag = 0;
     public HomeAdapter(@NonNull FirebaseRecyclerOptions<HomeMenuModel> options) {
         super(options);
+    }
+    public HomeAdapter(@NonNull FirebaseRecyclerOptions<HomeMenuModel> options, int flag) {
+        super(options);
+        this.flag = flag;
     }
     public HomeAdapter(@NonNull FirebaseRecyclerOptions<HomeMenuModel> options, String courseTitle) {
         super(options);
@@ -42,7 +49,7 @@ public class HomeAdapter extends FirebaseRecyclerAdapter<HomeMenuModel, HomeAdap
     @Override
     protected void onBindViewHolder(@NonNull myViewholder holder, int position, @NonNull HomeMenuModel model) {
         holder.title.setText(model.getTitle());
-        Glide.with(holder.img1.getContext()).load(model.getImgUrl()).into(holder.img1);
+        //Glide.with(holder.img1.getContext()).load(model.getImgUrl()).into(holder.img1);
 
         //for moving into next fragment***************
         String titleText = (String) holder.title.getText();
@@ -50,6 +57,7 @@ public class HomeAdapter extends FirebaseRecyclerAdapter<HomeMenuModel, HomeAdap
         // TODO: Conditions for Course Menu options
         //User home menu OPTIONS
         if ("Manage course".equals(titleText)) {
+            holder.img1.setImageResource(R.drawable.manage_course);
             holder.title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -57,7 +65,29 @@ public class HomeAdapter extends FirebaseRecyclerAdapter<HomeMenuModel, HomeAdap
                     appCompatActivity.getSupportFragmentManager().beginTransaction().replace(R.id.wrapper, new ManageCourseFragment()).addToBackStack(null).commit();
                 }
             });
-        } else if ("View course".equals(titleText) || "My courses".equals(titleText) || "Available course".equals(titleText)) {
+        } else if (flag == 1) {
+            holder.img1.setImageResource(R.drawable.download_icon);
+            holder.img1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setType("application/pdf");
+                    intent.setData(Uri.parse(model.getImgUrl()));
+                    startActivity(v.getContext(), intent, null);
+                }
+            });
+            holder.title.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.setType("application/pdf");
+                    intent.setData(Uri.parse(model.getImgUrl()));
+                    startActivity(v.getContext(), intent, null);
+                }
+            });
+        }
+        else if ("View course".equals(titleText) || "My courses".equals(titleText) || "Available course".equals(titleText)) {
+            holder.img1.setImageResource(R.drawable.courses);
             holder.title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -67,36 +97,33 @@ public class HomeAdapter extends FirebaseRecyclerAdapter<HomeMenuModel, HomeAdap
             });
 
         }else if ("Profile".equals(titleText)) {   //TODO
+            holder.img1.setImageResource(R.drawable.profile);
             holder.title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AppCompatActivity appCompatActivity = (AppCompatActivity) v.getContext();
-                    appCompatActivity.getSupportFragmentManager().beginTransaction().replace(R.id.wrapper, new CoursesFragment(model.getTitle())).addToBackStack(null).commit();
+                    Toast.makeText(v.getContext(), "Under construction.", Toast.LENGTH_LONG).show();
                 }
             });
         }else if ("Manage users".equals(titleText)) { //TODO
+            holder.img1.setImageResource(R.drawable.manage_user);
             holder.title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AppCompatActivity appCompatActivity = (AppCompatActivity) v.getContext();
-                    appCompatActivity.getSupportFragmentManager().beginTransaction().replace(R.id.wrapper, new CoursesFragment(model.getTitle())).addToBackStack(null).commit();
+                    Toast.makeText(v.getContext(), "Under construction.", Toast.LENGTH_LONG).show();
                 }
             });
         }else if ("Manage course request".equals(titleText)){  //TODO: last option: Manage course request(Course add/remove request by mentors should arrive here, then admin will take action?)
+            holder.img1.setImageResource(R.drawable.manage_course);
             holder.title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AppCompatActivity appCompatActivity = (AppCompatActivity) v.getContext();
-                    appCompatActivity.getSupportFragmentManager().beginTransaction().replace(R.id.wrapper, new CoursesFragment(model.getTitle())).addToBackStack(null).commit();
+                    Toast.makeText(v.getContext(), "Under construction.", Toast.LENGTH_LONG).show();
                 }
             });
         }
         //FOR  CourseMenuOptions:
         else if ("Participants".equals(titleText)) {
-            //Store in Firebase DB
-            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-            DatabaseReference node = firebaseDatabase.getReference();
-
+            holder.img1.setImageResource(R.drawable.participants);
             holder.title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -105,11 +132,8 @@ public class HomeAdapter extends FirebaseRecyclerAdapter<HomeMenuModel, HomeAdap
                 }
             });
         }
-        else if ("Notice".equals(titleText)) {
-            //Store in Firebase DB
-            FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-            DatabaseReference node = firebaseDatabase.getReference();
-
+        else if("Notice".equals(titleText)){
+            holder.img1.setImageResource(R.drawable.notice);
             holder.title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -118,13 +142,28 @@ public class HomeAdapter extends FirebaseRecyclerAdapter<HomeMenuModel, HomeAdap
                 }
             });
         }
-        else{   //TODO
+        else if ("Study materials".equals(titleText) || "Attendance".equals(titleText) || "Grades".equals(titleText)) {
+            if("Study materials".equals(titleText))
+                holder.img1.setImageResource(R.drawable.study_materials);
+            else if("Attendance".equals(titleText))
+                holder.img1.setImageResource(R.drawable.attendance);
+            else
+                holder.img1.setImageResource(R.drawable.grade);
+
             holder.title.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     AppCompatActivity appCompatActivity = (AppCompatActivity) v.getContext();
-                    appCompatActivity.getSupportFragmentManager().beginTransaction().replace(R.id.wrapper, new CoursesFragment(model.getTitle())).addToBackStack(null).commit();
+                    appCompatActivity.getSupportFragmentManager().beginTransaction().replace(R.id.wrapper, new recfragment(model.getTitle(), courseTitle, 0)).addToBackStack(null).commit();
                 }
+            });
+        }
+        else{
+            holder.img1.setImageResource(R.drawable.download_icon);
+            holder.title.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(v.getContext(), "Invalid option.", Toast.LENGTH_LONG).show();}
             });
         }
     }

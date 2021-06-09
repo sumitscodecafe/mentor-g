@@ -69,16 +69,14 @@ public class CourseAdapter extends FirebaseRecyclerAdapter<CoursesModel, CourseA
                                 getUserCourseId.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
-                                        int unEnrolledFlag = 0;
                                         for (DataSnapshot idSnapshot: dataSnapshot.getChildren()) {
                                             if(idSnapshot.hasChildren()) {
                                                 idSnapshot.getRef().removeValue();
-                                                unEnrolledFlag = 1;
                                                 Toast.makeText(view.getContext(), "Course un-enrolled", Toast.LENGTH_SHORT).show();
                                             }
-                                            if(unEnrolledFlag == 0)
-                                                Toast.makeText(view.getContext(), "Course not enrolled!", Toast.LENGTH_SHORT).show();
                                         }
+                                        if (!dataSnapshot.hasChildren())
+                                            Toast.makeText(view.getContext(), "Error, not found.", Toast.LENGTH_SHORT).show();
                                     }
 
                                     @Override
@@ -89,16 +87,14 @@ public class CourseAdapter extends FirebaseRecyclerAdapter<CoursesModel, CourseA
                                 getCourseName_participants.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
-                                        int unEnrolledFlag = 0;
                                         for (DataSnapshot idSnapshot: dataSnapshot.getChildren()) {
                                             if(idSnapshot.hasChildren()) {
                                                 idSnapshot.getRef().removeValue();
-                                                unEnrolledFlag = 1;
                                                 Toast.makeText(view.getContext(), "Course un-enrolled", Toast.LENGTH_SHORT).show();
                                             }
-                                            if(unEnrolledFlag == 0)
-                                                Toast.makeText(view.getContext(), "Course not enrolled!", Toast.LENGTH_SHORT).show();
                                         }
+                                        if (!dataSnapshot.hasChildren())
+                                            Toast.makeText(view.getContext(), "Error, not found.", Toast.LENGTH_SHORT).show();
                                     }
 
                                     @Override

@@ -105,29 +105,27 @@ public class ManageCourseFragment extends Fragment {
                         node.child("userCourse").child(username).push().setValue(courseModel);  //For personalised courses
                         Toast.makeText(getActivity(), "Course added", Toast.LENGTH_LONG).show();
                     }else{
-                        //For general course removal
+                        //For general course removal - mentor
                         Query getCourseId = node.child("course").orderByChild("name").equalTo(name);
                         getCourseId.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
-                                int unEnrolledFlag = 0;
                                 for (DataSnapshot idSnapshot: dataSnapshot.getChildren()) {
                                     if(idSnapshot.hasChildren()) {
                                         idSnapshot.getRef().removeValue();
-                                        unEnrolledFlag = 1;
                                         Toast.makeText(getActivity(), "Course removed", Toast.LENGTH_SHORT).show();
                                     }
-                                    if(unEnrolledFlag == 0)
-                                        Toast.makeText(getActivity(), "Course not found!", Toast.LENGTH_SHORT).show();
                                 }
+                                if (!dataSnapshot.hasChildren())
+                                    Toast.makeText(getActivity(), "No record found.", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
                             public void onCancelled(@NonNull DatabaseError error) { }
                         });
-                        //For personal course removal
+                        //For personal course removal - mentor
                         Query getUserCourseId = node.child("userCourse").child(username).orderByChild("name").equalTo(name);
-                        getCourseId.addListenerForSingleValueEvent(new ValueEventListener() {
+                        getUserCourseId.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
                                 for (DataSnapshot idSnapshot: dataSnapshot.getChildren()) {
@@ -135,9 +133,9 @@ public class ManageCourseFragment extends Fragment {
                                         idSnapshot.getRef().removeValue();
                                         Toast.makeText(getActivity(), "Course removed", Toast.LENGTH_SHORT).show();
                                     }
-                                    else
-                                        Toast.makeText(getActivity(), "Course not found!", Toast.LENGTH_SHORT).show();
                                 }
+                                if (!dataSnapshot.hasChildren())
+                                    Toast.makeText(getActivity(), "No record found.", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override

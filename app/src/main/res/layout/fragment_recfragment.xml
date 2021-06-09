@@ -11,17 +11,30 @@
         android:layout_height="match_parent"
         android:background="@drawable/bg3"
         />
+    <EditText
+        android:id="@+id/notice_text"
+        android:layout_width="275dp"
+        android:layout_height="48dp"
+        android:layout_gravity="bottom"
+        android:visibility="invisible"
+        android:ems="12"
+        android:background="@drawable/my_edit_text"
+        android:textColor="@color/black"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="20dp"
+        android:hint=" Enter text..."
+        android:inputType="text" />
     <Button
         android:id="@+id/btn_plus"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:visibility="invisible"
-        android:layout_marginLeft="280dp"
+        android:layout_marginStart="290dp"
         android:text="Add"
+        android:background="@color/colorPrimary"
         android:layout_marginBottom="20dp"
-        android:textColor="@color/black"
-        android:backgroundTint="@color/white"
+        android:textColor="@color/white"
         android:elevation="10dp"/>
 
 </FrameLayout>

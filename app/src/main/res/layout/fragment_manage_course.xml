@@ -23,6 +23,7 @@
         android:layout_below="@+id/heading"
         android:layout_marginTop="50dp"
         android:ems="12"
+        android:textColor="#222222"
         android:inputType="text"
         android:hint="Course name"/>
 
@@ -34,9 +35,11 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="-1dp"
         android:ems="12"
-        android:hint="Course description (Input for adding course only)"
+        android:hint="Course description(Input for adding course only)"
         android:inputType="textMultiLine"
+        android:textColorHint="#191919"
         android:maxLength="100"
+        android:textColor="@color/black"
         android:lines="4"/>
 
     <RadioGroup

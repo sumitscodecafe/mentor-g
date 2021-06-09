@@ -63,19 +63,20 @@ public class RegisterActivity extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Select user option", Toast.LENGTH_LONG).show();
                 else{
                     user = (String) radioButton.getText();
+                    SharedPreference.saveSharedSetting(getApplicationContext(), "reg_flag", "true");
                     SharedPreference.saveSharedSetting(getApplicationContext(), "username", username);
                     SharedPreference.saveSharedSetting(getApplicationContext(), "password", password);
                     if(user.equals("Mentor")) {
                         SharedPreference.saveSharedSetting(getApplicationContext(), "user", "MENTOR");
                         SharedPreference.saveSharedSetting(getApplicationContext(), "fullname", fullname);
                         node.child("mentor").child(username).setValue(userInfoHolder);
-                        Toast.makeText(getApplicationContext(), "HERE!!", Toast.LENGTH_LONG).show();
                     }else {
                         SharedPreference.saveSharedSetting(getApplicationContext(), "user", "MENTEE");
                         SharedPreference.saveSharedSetting(getApplicationContext(), "fullname", fullname);
                         node.child("mentee").child(username).setValue(userInfoHolder);
                     }
                     startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+                    finish();
                 }
 
 

@@ -100,7 +100,7 @@
         android:text="Login"
         android:layout_marginBottom="20dp"
         android:textColor="@color/black"
-        android:backgroundTint="@color/white"
+        android:backgroundTint="@color/colorPrimary"
         android:layout_alignParentBottom="true"
         android:elevation="10dp"/>
 

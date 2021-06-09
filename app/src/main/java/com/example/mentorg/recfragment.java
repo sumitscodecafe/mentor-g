@@ -15,17 +15,28 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class  recfragment extends Fragment {
 
@@ -36,9 +47,10 @@ public class  recfragment extends Fragment {
     private String mParam2;
     RecyclerView recyclerView;
     HomeAdapter homeAdapter;
-    ParticipantAdapter participantAdapter;
+    ParticipantAdapter itemAdapter;
     String showCourseMenu = "", courseTitle, menuTitle = "";
     int flag = 0;   //used for adapter listener(see bottom)
+    EditText notice_text;
 
     public recfragment() {
         // Required empty public constructor
@@ -64,7 +76,7 @@ public class  recfragment extends Fragment {
     }
 
     StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("courseMenuContents/notice/"+courseTitle);
+    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("courseMenuContents/");
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,13 +91,14 @@ public class  recfragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         FirebaseRecyclerOptions<HomeMenuModel> menuOptions;
-        FirebaseRecyclerOptions<ParticipantModel> participantList;
+        FirebaseRecyclerOptions<ParticipantModel> itemList;
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_recfragment, container, false);
         recyclerView = (RecyclerView)view.findViewById(R.id.recView);
         recyclerView.setLayoutManager(new LinearLayoutManager((getContext())));
 
-        //For setting add button to VISIBLE
+        //For setting editText & button to VISIBLE
+        notice_text = view.findViewById(R.id.notice_text);
         Button button_plus = view.findViewById(R.id.btn_plus);
         String user = SharedPreference.readSharedSetting(getContext(), "user", "false");
 
@@ -98,18 +111,56 @@ public class  recfragment extends Fragment {
             recyclerView.setAdapter(homeAdapter);
             return view;
         }
+        else if(menuTitle.equals("Notice")){
+            if(user.equals("MENTOR")) {
+                notice_text.setVisibility(View.VISIBLE);
+                button_plus.setVisibility(View.VISIBLE);
+                button_plus.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //Upload notice
+                        String notice = notice_text.getText().toString();
+                        DatabaseReference node = FirebaseDatabase.getInstance().getReference();
+                        node.child("courseMenuContents/notice/"+courseTitle).push().child("fullname").setValue(notice);
+                        notice_text.setText("");
+                        Toast.makeText(getActivity(), "Notice added.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+            itemList =
+                    new FirebaseRecyclerOptions.Builder<ParticipantModel>()
+                            .setQuery(FirebaseDatabase.getInstance().getReference().child("courseMenuContents/notice/"+courseTitle), ParticipantModel.class)
+                            .build();
+            itemAdapter = new ParticipantAdapter(itemList);
+            recyclerView.setAdapter(itemAdapter);
+            return view;
+        }
         else if(menuTitle.equals("Participants")){
-            participantList =
+            Query check_exist = FirebaseDatabase.getInstance().getReference().child("courseMenuContents/participants/"+courseTitle);
+            check_exist.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.hasChildren())
+                        Toast.makeText(getActivity(), "No record found.", Toast.LENGTH_LONG).show();
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) { }
+            });
+            itemList =
                     new FirebaseRecyclerOptions.Builder<ParticipantModel>()
                             .setQuery(FirebaseDatabase.getInstance().getReference().child("courseMenuContents/participants/"+courseTitle), ParticipantModel.class)
                             .build();
-            participantAdapter = new ParticipantAdapter(participantList);
-            recyclerView.setAdapter(participantAdapter);
+            itemAdapter = new ParticipantAdapter(itemList);
+            recyclerView.setAdapter(itemAdapter);
             return view;
         }
-        else if(menuTitle.equals("Notice")){
+        else if(menuTitle.equals("Study materials") || menuTitle.equals("Attendance") || menuTitle.equals("Grades")){
             if(user.equals("MENTOR")) {
+                notice_text.setVisibility(View.VISIBLE);
                 button_plus.setVisibility(View.VISIBLE);
+                notice_text.setHint("Enter filename");
+                button_plus.setText(R.string.upload_btn);
+
                 button_plus.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -117,13 +168,25 @@ public class  recfragment extends Fragment {
                         selectPDF();
                     }
                 });
-            }//TODO: Notice Model(home menu model) & Adapter Class below?
-            participantList =
-                    new FirebaseRecyclerOptions.Builder<ParticipantModel>()
-                            .setQuery(FirebaseDatabase.getInstance().getReference().child("courseMenuContents/notice/" + courseTitle), ParticipantModel.class)
+            }
+            //Message for no records found
+            DatabaseReference node = FirebaseDatabase.getInstance().getReference();
+            Query getUserCourseId = node.child("courseMenuContents").child(menuTitle).child(courseTitle).orderByChild("title");
+            getUserCourseId.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NotNull DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.hasChildren())
+                        Toast.makeText(view.getContext(), "No records found.", Toast.LENGTH_SHORT).show();
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) { }
+            });
+            menuOptions =
+                    new FirebaseRecyclerOptions.Builder<HomeMenuModel>()
+                            .setQuery(FirebaseDatabase.getInstance().getReference().child("courseMenuContents/"+menuTitle+"/"+courseTitle), HomeMenuModel.class)
                             .build();
-            participantAdapter = new ParticipantAdapter(participantList);
-            recyclerView.setAdapter(participantAdapter);
+            homeAdapter = new HomeAdapter(menuOptions, 1);
+            recyclerView.setAdapter(homeAdapter);
             return view;
         }
 
@@ -154,7 +217,7 @@ public class  recfragment extends Fragment {
     private void selectPDF() {
         Intent intent = new Intent();
         intent.setType("application/pdf");
-        intent.setAction(intent.ACTION_GET_CONTENT);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "PDF FILE SELECT"), 999);
     }
 
@@ -162,15 +225,17 @@ public class  recfragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 999 && data != null && data.getData() != null){
-            String fileName = data.getDataString().substring(data.getDataString().lastIndexOf('/') + 1);
-            uploadPDF(fileName, data.getData());
+            //String fileName = data.getDataString().substring(data.getDataString().lastIndexOf('/') + 1);
+            uploadPDF(data.getData());
         }
     }
 
-    private void uploadPDF(String fileName, Uri data) {
+    private void uploadPDF(Uri data) {
         final ProgressDialog progressDialog = new ProgressDialog(getContext());
         progressDialog.setTitle("File upload");
         progressDialog.show();
+
+        String fileName = notice_text.getText().toString();
 
         StorageReference reference = storageReference.child(System.currentTimeMillis()+".pdf");
         reference.putFile(data).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -182,15 +247,16 @@ public class  recfragment extends Fragment {
                 Uri uri = uriTask.getResult();
 
                 HomeMenuModel fileModel = new HomeMenuModel(fileName, uri.toString());
-                databaseReference.child(databaseReference.push().getKey()).setValue(fileModel);
+                databaseReference.child(menuTitle).child(courseTitle).push().setValue(fileModel);
                 Toast.makeText(getContext(), "File uploaded!", Toast.LENGTH_SHORT).show();
                 progressDialog.dismiss();
+                notice_text.setText("");
             }
         }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-                double progress = (100.0* snapshot.getBytesTransferred())/snapshot.getTotalByteCount();
-                progressDialog.setMessage("File uploading..." + (int)progress+"%");
+                //double progress = (100.0* snapshot.getBytesTransferred())/snapshot.getTotalByteCount();
+                progressDialog.setMessage("File uploading, please wait...");
             }
         });
     }
@@ -201,7 +267,7 @@ public class  recfragment extends Fragment {
         if(flag == 0)
             homeAdapter.startListening();
         else
-            participantAdapter.startListening();
+            itemAdapter.startListening();
     }
 
     @Override
@@ -210,6 +276,6 @@ public class  recfragment extends Fragment {
         if(flag == 0)
             homeAdapter.startListening();
         else
-            participantAdapter.startListening();
+            itemAdapter.startListening();
     }
 }
